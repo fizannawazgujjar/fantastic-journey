@@ -65,8 +65,17 @@ class AIAgent:
     def _ask_gemini(prompt):
         try:
             response = gemini_client.models.generate_content(
-                model="gemini-1.5-flash",
-                contents=prompt,
+                model="gemini-2.5-flash",
+                contents=f"""
+                you are Jarvis, an AI assistant.
+                Rules:
+                - Reply in 1 to 3 short sentences.
+                - maximum 30 words.
+                - Do not use Markdown.
+                - Do not use bullet points.
+                - Speat naturally like Jarvis.
+                User: {prompt}""" 
+
             )
             return str(response.text).strip()
         except Exception as exc:
