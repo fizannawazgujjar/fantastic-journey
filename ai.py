@@ -8,12 +8,13 @@ except ImportError:
     genai = None
 
 try:
-    import openai
+    from openai import OpenAI
 except ImportError:
-    openai = None
+    OpenAI = None
 
-if openai and OPENAI_API_KEY:
-    openai.api_key = OPENAI_API_KEY
+openai_client = None
+if OpenAI and OPENAI_API_KEY:
+    openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
 if genai and GEMINI_API_KEY:
     gemini_client = genai.Client(api_key=GEMINI_API_KEY)
@@ -39,7 +40,7 @@ class AIAgent:
         return response_text
 
     def _generate_response(self):
-        if openai and OPENAI_API_KEY:
+        if openai_client and OPENAI_API_KEY:
             return self._ask_openai(self.history)
 
         if gemini_client:
@@ -50,7 +51,7 @@ class AIAgent:
     @staticmethod
     def _ask_openai(history):
         try:
-            response = openai.ChatCompletion.create(
+            response = openai_client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=history,
                 max_tokens=600,
@@ -64,13 +65,9 @@ class AIAgent:
     def _ask_gemini(prompt):
         try:
             response = gemini_client.models.generate_content(
-                model="gemini-2.5-flash",
+                model="gemini-1.5-flash",
                 contents=prompt,
             )
             return str(response.text).strip()
         except Exception as exc:
             return f"Gemini error: {exc}"
-
-
-
-       

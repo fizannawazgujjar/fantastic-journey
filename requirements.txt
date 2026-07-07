@@ -1,4 +1,5 @@
-openai
+openai>=1.0.0
+google-generativeai
 SpeechRecognition
 pyttsx3
 pygame
@@ -10,3 +11,4 @@ pyaudio
 pvporcupine
 sounddevice
 numpy
+edge-tts

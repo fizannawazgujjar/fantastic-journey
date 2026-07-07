@@ -38,14 +38,21 @@ def listen():
         with sr.Microphone(device_index=MIC_DEVICE_INDEX) as source:
             print("Listening...")
             recognizer.adjust_for_ambient_noise(source, duration=1)
-            audio = recognizer.listen(source)
-    except Exception as exc:
+            audio = recognizer.listen(source, timeout=10, phrase_time_limit=10)
+    except sr.RequestError as exc:
         print("Microphone error:", exc)
+        return ""
+    except sr.UnknownValueError:
+        print("Could not understand audio")
         return ""
 
     try:
         command = recognizer.recognize_google(audio)
         print("You:", command)
         return command
-    except Exception:
+    except sr.RequestError as exc:
+        print("Google API error:", exc)
+        return ""
+    except sr.UnknownValueError:
+        print("Could not understand audio")
         return ""
